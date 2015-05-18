@@ -73,8 +73,11 @@ class Translator(object):
 
     def make_request(self, action, params=None):
         url = self.make_url(action)
-        resp = requests.get(url, auth=self.auth, params=params)
-        return self.make_response(resp)
+        try:
+            resp = requests.get(url, auth=self.auth, params=params, timeout=10)
+            return self.make_response(resp)
+        except requests.exceptions.ConnectTimeout:
+            return ""
 
     def make_response(self, resp):
         # Sanitize strange zero width no-break space character in response
